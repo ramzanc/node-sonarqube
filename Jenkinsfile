@@ -2,11 +2,11 @@ pipeline {
   agent any
 
   tools {
-    nodejs 'node-24' // This must match the Node.js version name in Jenkins Global Tools
+    nodejs 'node-24'
   }
 
   environment {
-    SONAR_TOKEN = credentials('sonar-token-id') // Jenkins credential ID for SonarQube token
+    SONAR_TOKEN = credentials('sonar-token-id')
   }
 
   stages {
@@ -18,27 +18,21 @@ pipeline {
 
     stage('Install') {
       steps {
-        sh 'npm install'
+        bat 'npm install'
       }
     }
 
     stage('Test') {
       steps {
-        sh 'npm test'
+        bat 'npm test'
       }
     }
 
     stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh 'npx sonar-scanner -Dsonar.login=$SONAR_TOKEN'
+          bat 'npx sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
         }
-      }
-    }
-
-    stage('Build & Deploy') {
-      steps {
-        echo 'Deploying...'
       }
     }
   }
